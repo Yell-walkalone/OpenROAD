@@ -5180,6 +5180,9 @@ void Resizer::journalEnd()
     sta_->findRequireds();
   }
   odb::dbDatabase::commitEco(block_);
+  if (committed_state_observer_) {
+    committed_state_observer_("eco_committed");
+  }
 }
 
 void Resizer::journalMakeBuffer(sta::Instance* buffer)
@@ -5218,6 +5221,9 @@ void Resizer::journalRestore()
 
   // ECO undo can change the graph topology seen by later passes.
   invalidateVertexOrdering();
+  if (committed_state_observer_) {
+    committed_state_observer_("eco_restored");
+  }
 
   debugPrint(logger_, RSZ, "journal", 1, "journal restore ends <<<");
 }

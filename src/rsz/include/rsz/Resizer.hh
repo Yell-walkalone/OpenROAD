@@ -514,6 +514,12 @@ class Resizer : public sta::dbStaState, public sta::dbNetworkObserver
 
   ////////////////////////////////////////////////////////////////
   void initBlock();
+  // Optional observer of stable accepted/rolled-back repair states.
+  void setCommittedStateObserver(std::function<void(const char*)> observer)
+  {
+    committed_state_observer_ = std::move(observer);
+  }
+
   void journalBeginTest();
   void journalRestoreTest();
   void eliminateDeadLogic(bool clean_nets);
@@ -932,6 +938,7 @@ class Resizer : public sta::dbStaState, public sta::dbNetworkObserver
   // success, or roll it back via undoEco() on regret.  journalEnd()
   // and journalRestore() additionally refresh parasitics, run
   // findRequireds(), and (on restore) invalidate vertex ordering.
+  std::function<void(const char*)> committed_state_observer_;
   void journalBegin();
   void journalEnd();
   void journalRestore();
